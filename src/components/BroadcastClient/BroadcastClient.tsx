@@ -4,6 +4,8 @@ import IVSBroadcastClient from 'amazon-ivs-web-broadcast'
 import { AudioDevice, VideoDevice } from '../../models'
 import { ingestEndpoint, streamKey, streamConfig } from '../../constants'
 
+import styles from './BroadcastClient.module.css'
+
 const client = IVSBroadcastClient.create({
     streamConfig,
     ingestEndpoint
@@ -33,6 +35,7 @@ async function handlePermissions() {
     if (!permissions.video) console.error('Failed to get video permissions.')
     if (!permissions.audio) console.error('Failed to get audio permissions.')
 }
+
 export function BroadcastClient() {
     const [broadcasting, setBroadcasting] = useState(false)
 
@@ -109,7 +112,7 @@ export function BroadcastClient() {
 
     return (
         <div>
-            <canvas ref={canvas} />
+            <canvas className={styles.canvas} ref={canvas} />
             {streamKey && (
                 <div>
                     {!broadcasting ? (
