@@ -1,7 +1,7 @@
 import { StreamConfig } from 'amazon-ivs-web-broadcast'
 
-export const streamKey = import.meta.env.VITE_INGEST_ENDPOINT
-export const ingestEndpoint = import.meta.env.VITE_STREAM_KEY
+export const streamKey = import.meta.env.VITE_STREAM_KEY
+export const ingestEndpoint = import.meta.env.VITE_INGEST_ENDPOINT
 
 export const streamConfig: StreamConfig = {
     maxResolution: {

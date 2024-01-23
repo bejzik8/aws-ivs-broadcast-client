@@ -30,16 +30,10 @@ async function handlePermissions() {
         permissions = { video: false, audio: false }
     }
 
-    // If we still don't have permissions after requesting them display the error message
-    if (!permissions.video) {
-        console.error('Failed to get video permissions.')
-    } else if (!permissions.audio) {
-        console.error('Failed to get audio permissions.')
-    }
+    if (!permissions.video) console.error('Failed to get video permissions.')
+    if (!permissions.audio) console.error('Failed to get audio permissions.')
 }
 export function BroadcastClient() {
-    const [videoDevices, setVideoDevices] = useState<VideoDevice[]>([])
-    const [audioDevices, setAudioDevices] = useState<AudioDevice[]>([])
     const [broadcasting, setBroadcasting] = useState(false)
 
     const canvas = useRef(null)
@@ -49,8 +43,6 @@ export function BroadcastClient() {
             await handlePermissions()
 
             if (canvas.current) client.attachPreview(canvas.current)
-
-            await listDevices()
 
             getStream()
         }
@@ -64,18 +56,17 @@ export function BroadcastClient() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const listDevices = async () => {
+    const getStream = async () => {
         const devices = await navigator.mediaDevices.enumerateDevices()
 
-        setVideoDevices(
-            devices.filter(d => d.kind === 'videoinput') as VideoDevice[]
-        )
-        setAudioDevices(
-            devices.filter(d => d.kind === 'audioinput') as AudioDevice[]
-        )
-    }
+        const videoDevices = devices.filter(
+            d => d.kind === 'videoinput'
+        ) as VideoDevice[]
 
-    const getStream = async () => {
+        const audioDevices = devices.filter(
+            d => d.kind === 'audioinput'
+        ) as AudioDevice[]
+
         const cameraStream = await navigator.mediaDevices.getUserMedia({
             video: {
                 deviceId: videoDevices?.[0]?.deviceId,
@@ -97,11 +88,11 @@ export function BroadcastClient() {
     }
 
     const startBroadcast = async () => {
-        client.config.ingestEndpoint = ingestEndpoint
         await client.getAudioContext().resume()
 
         try {
             await client.startBroadcast(streamKey)
+
             setBroadcasting(true)
 
             console.log('->> Broadcast started...')
